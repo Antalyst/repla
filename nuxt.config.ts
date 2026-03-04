@@ -36,8 +36,8 @@ export default defineNuxtConfig({
         url: process.env.SUPABASE_URL,
         key: process.env.SUPABASE_KEY,
       },
-      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'http://localhost:3000'
+      apiBase: process.env.NUXT_PUBLIC_API_BASE || 'https://https://repla-theta.vercel.app'
     },
-    geminiApiKey: process.env.NUXT_GEMINI_API_KEY,
+    geminiApiKey: process.env.NUXT_GEMINI_API_KEY ,
   }
 })
