@@ -38,6 +38,6 @@ export default defineNuxtConfig({
       },
       apiBase: 'https://repla-theta.vercel.app'
     },
-    geminiApiKey: process.env.GEMINI_API_KEY,
+    geminiApiKey: process.env.NUXT_GEMINI_API_KEY,
   }
 })

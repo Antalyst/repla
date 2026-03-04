@@ -34,6 +34,7 @@ import { ref, onMounted } from 'vue';
 import { alertController } from '@ionic/vue';
 import { useSupabaseClient } from '#imports';
 
+// const API_BASE_URL = 'https://repla-theta.vercel.app';
 const API_BASE_URL = 'https://repla-theta.vercel.app';
 const messages = ref<any[]>([]);
 const activeChatId = ref<any>(null);
