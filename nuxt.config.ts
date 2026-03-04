@@ -12,11 +12,23 @@ export default defineNuxtConfig({
     '@nuxtjs/supabase'
   ],
   supabase: {
-       redirectOptions: {
-        login: '/',
-        callback: '/auth/callback',
-        exclude: ['/register','/'],
-      },
+    redirectOptions: {
+      login: '/',
+      callback: '/auth/callback',
+      exclude: ['/register','/'],
+    },
+    cookieOptions: {
+      maxAge: 60 * 60 * 24 * 365, // 1 year
+      sameSite: 'lax',
+      secure: false 
+    },
+    cookiePrefix: 'sb-auth-token',
+    clientOptions: {
+      auth: {
+        persistSession: true,
+        storage: 'localStorage'
+      }
+    }
   },
   runtimeConfig: {
     public: {

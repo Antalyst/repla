@@ -30,20 +30,66 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { alertController } from '@ionic/vue';
+
+const API_BASE_URL = 'https://repla-theta.vercel.app';
+
+const showErrorAlert = async (message: string) => {
+  const alert = await alertController.create({
+    header: 'Connection Error',
+    message: message,
+    buttons: ['OK'],
+  });
+  await alert.present();
+};
+
 const messages = ref<any[]>([]);
-const activeChatId = ref(null);
+const activeChatId = ref<any>(null);
 const newMessage = ref('');
 const isAiLoading = ref(false);
 
 onMounted(async () => {
-  const chat = await $fetch('/api/chat/get-or-create', { method: 'POST' });
-  activeChatId.value = chat.id;
-  await loadMessages();
+  console.log('DEBUG: Contact page mounted')
+  
+  try {
+    const { post, get } = useApi();
+    console.log('DEBUG: About to call get-or-create API')
+    
+    const chat = await post('/api/chat/get-or-create');
+    console.log('DEBUG: Chat created/retrieved:', chat)
+    
+    activeChatId.value = chat.id;
+    await loadMessages();
+  } catch (error) {
+    console.error('DEBUG: Failed to initialize chat:', error);
+    console.error('DEBUG: Error details:', {
+      statusCode: error?.statusCode,
+      statusMessage: error?.statusMessage,
+      message: error?.message
+    });
+    
+    if (error?.statusCode === 401) {
+      showErrorAlert('Authentication expired. Please log in again.');
+      // Redirect to login after a short delay
+      setTimeout(() => navigateTo('/'), 2000);
+    } else {
+      showErrorAlert('Failed to load chat. Please try logging in again.');
+    }
+  }
 });
 
 const loadMessages = async () => {
-  const data = await $fetch('/api/chat/messages');
-  messages.value = Array.isArray(data) ? data : [];
+  try {
+    const { get } = useApi();
+    const data = await get('/api/chat/messages', {
+      query: { chatId: activeChatId.value }
+    });
+    messages.value = Array.isArray(data) ? data : [];
+  } catch (error) {
+    console.error('Failed to load messages:', error);
+    showErrorAlert('Failed to load messages.');
+  }
 };
 
 const sendMessage = async () => {
@@ -55,16 +101,22 @@ const sendMessage = async () => {
   isAiLoading.value = true;
 
   try {
-    const res = await $fetch('/api/chat/send', {
-      method: 'POST',
-      body: { chatId: activeChatId.value, message: text }
+    const { post } = useApi();
+    const res = await post('/api/chat/send', {
+      chatId: activeChatId.value,
+      message: text
     });
 
     messages.value.push({ id: Date.now() + 1, role: 'assistant', content: res.response });
-  } catch (e) {
+  } catch (e: any) {
     console.error("Failed to send:", e);
     messages.value.pop();
-    alert("Error sending message.");
+    
+    if (e.statusCode === 401) {
+      showErrorAlert('Authentication failed. Please log in again.');
+    } else {
+      showErrorAlert("The app couldn't reach the server. Ensure you have internet and try again.");
+    }
   } finally {
     isAiLoading.value = false;
   }

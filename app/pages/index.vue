@@ -65,12 +65,27 @@ const loading = ref(false)
 
 async function handleSignIn() {
   loading.value = true
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: email.value,
     password: password.value,
   })
-  if (error) alert(error.message)
-  else navigateTo('/contact') 
+  if (error) {
+    alert(error.message)
+  } else {
+    console.log('DEBUG: Sign in successful, session:', data.session)
+    // Wait a moment for session to be fully established
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
+    // Verify session before navigating
+    const { data: { session } } = await supabase.auth.getSession()
+    console.log('DEBUG: Session after delay:', session)
+    
+    if (session) {
+      navigateTo('/contact')
+    } else {
+      alert('Login successful but session not established. Please try again.')
+    }
+  }
   loading.value = false
 }
 
