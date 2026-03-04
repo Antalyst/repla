@@ -63,7 +63,7 @@ onMounted(async () => {
   try {
     const headers = await getAuthHeaders();
     
-    const chat = await $fetch(`$/api/chat/get-or-create`, {
+    const chat = await $fetch(`/api/chat/get-or-create`, {
       method: 'POST',
       headers
     });
