@@ -63,7 +63,7 @@ onMounted(async () => {
   try {
     const headers = await getAuthHeaders();
     
-    const chat = await $fetch(`/api/chat/get-or-create`, {
+    const chat = await $fetch(`https://repla-theta.vercel.app/api/chat/get-or-create`, {
       method: 'POST',
       headers
     });
@@ -83,7 +83,7 @@ onMounted(async () => {
 const loadMessages = async () => {
   try {
     const headers = await getAuthHeaders();
-    const data = await $fetch(`/api/chat/messages`, {
+    const data = await $fetch(`https://repla-theta.vercel.app/api/chat/messages`, {
       method: 'GET',
       headers,
       query: { chatId: activeChatId.value }
@@ -106,7 +106,7 @@ const sendMessage = async () => {
   try {
     const headers = await getAuthHeaders();
     
-    const res: any = await $fetch(`/api/chat/send`, {
+    const res: any = await $fetch(`https://repla-theta.vercel.app/api/chat/send`, {
       method: 'POST',
       headers,
       body: { chatId: activeChatId.value, message: text }
