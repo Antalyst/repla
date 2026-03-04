@@ -18,7 +18,7 @@ export default defineNuxtConfig({
       exclude: ['/register','/'],
     },
     cookieOptions: {
-      maxAge: 60 * 60 * 24 * 365, // 1 year
+      maxAge: 60 * 60 * 24 * 365,
       sameSite: 'lax',
       secure: false 
     },
