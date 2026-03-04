@@ -32,10 +32,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { alertController } from '@ionic/vue';
-import { useSupabaseClient } from '#imports';
+import { useSupabaseClient, useRuntimeConfig } from '#imports';
 
-// const API_BASE_URL = 'https://repla-theta.vercel.app';
-const API_BASE_URL = 'https://repla-theta.vercel.app';
+const config = useRuntimeConfig();
+const API_BASE_URL = config.public.apiBase;
 const messages = ref<any[]>([]);
 const activeChatId = ref<any>(null);
 const newMessage = ref('');
