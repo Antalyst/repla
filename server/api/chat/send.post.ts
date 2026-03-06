@@ -11,7 +11,11 @@ export default defineEventHandler(async (event) => {
   const { chatId, message } = body;
   const client = serverSupabaseServiceRole(event);
 
-  await client.from('messages').insert({ chat_id: chatId, role: 'user', content: message });
+  await client.from('messages').insert({ 
+    chat_id: chatId, 
+    role: 'user', 
+    content: message 
+  });
 
   const { data: dbMessages } = await client
     .from('messages')
@@ -42,13 +46,34 @@ export default defineEventHandler(async (event) => {
         ...chatHistory
       ],
       model: "llama-3.3-70b-versatile",
+      stream: true,
+    });
+    const encoder = new TextEncoder();
+    let fullResponse = "";
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        for await (const chunk of completion) {
+          const content = chunk.choices[0]?.delta?.content || "";
+          if (content) {
+            fullResponse += content;
+            controller.enqueue(encoder.encode(content));
+          }
+        }
+        
+
+        await client.from('messages').insert({ 
+          chat_id: chatId, 
+          role: 'assistant', 
+          content: fullResponse 
+        });
+        
+        controller.close();
+      }
     });
 
-    const aiResponse = completion.choices[0]?.message?.content || "I'm sorry, I couldn't process that.";
+    return sendStream(event, stream);
 
-    await client.from('messages').insert({ chat_id: chatId, role: 'assistant', content: aiResponse });
-
-    return { response: aiResponse };
   } catch (e: any) {
     console.error("Groq API Error:", e);
     throw createError({ statusCode: 500, statusMessage: 'Groq Service Error' });
