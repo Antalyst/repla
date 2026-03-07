@@ -9,7 +9,7 @@
           <div class="bg-white/80 backdrop-blur-xl flex-1 rounded-b-2xl p-8 flex flex-col gap-4 justify-between shadow-lg">
             <div class="flex flex-col items-center justify-center">
               <h1 class="text-6xl font-bold text-[#57595B]">Welcome To</h1>
-              <div class="flex items-end mt-4 absolute top-[100px] right-[50px]">
+              <div class="flex items-end mt-4 absolute top-[100px] right-[40px]">
                 <img src="/logo.png" class="w-[100px]" alt="">
                 <h1 class="text-6xl font-bold text-[#57595B]">epla</h1>
               </div>
